@@ -1,101 +1,104 @@
-import Image from "next/image";
+"use client";
+import { useState } from "react";
+import TopNav from "@/components/dashboard/TopNav";
+import BottomNav from "@/components/dashboard/BottomNav";
+import MetroHeader from "@/components/dashboard/MetroHeader";
+import BudgetShield from "@/components/shield/BudgetShield";
+import SurvivalBuckets from "@/components/buckets/SurvivalBuckets";
+import InsightAlerts from "@/components/dashboard/InsightAlerts";
+import TransactionFeed from "@/components/dashboard/TransactionFeed";
+import MonthComparison from "@/components/dashboard/MonthComparison";
+import AddExpenseModal from "@/components/dashboard/AddExpenseModal";
+import ProfilePage from "@/components/profile/ProfilePage";
+import { UserCircle } from "lucide-react";
+import type { Transaction } from "@/types";
+
+const SIDEBAR_TABS = [
+  { id: "dashboard", label: "Dashboard" },
+  { id: "shield", label: "Budget Shield" },
+  { id: "buckets", label: "Survival Buckets" },
+  { id: "insights", label: "AI Insights" },
+  { id: "profile", label: "Profile" },
+];
 
 export default function Home() {
-  return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="https://nextjs.org/icons/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              app/page.tsx
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
+  const [activeTab, setActiveTab] = useState("dashboard");
+  const [userTransactions, setUserTransactions] = useState<Transaction[]>([]);
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="https://nextjs.org/icons/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
-        </div>
-      </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+  function handleAddExpense(txn: Transaction) {
+    setUserTransactions((prev) => [txn, ...prev]);
+    setActiveTab("dashboard");
+  }
+
+  return (
+    <div className="min-h-screen bg-[#0f1117] flex flex-col">
+      {/* Beta banner */}
+      <div className="bg-amber-400/10 border-b border-amber-400/15 py-2 px-4 text-center">
+        <p className="text-amber-400 text-xs font-medium">
+          MetroAnchor Beta — Your data stays on your device. UPI linking coming soon.
+        </p>
+      </div>
+
+      <TopNav />
+
+      <div className="flex flex-1 max-w-5xl mx-auto w-full">
+        {/* Desktop sidebar */}
+        <aside className="hidden md:flex flex-col w-52 flex-shrink-0 pt-6 px-3 gap-1 sticky top-14 h-[calc(100vh-3.5rem)] overflow-y-auto">
+          {SIDEBAR_TABS.map(({ id, label }) => (
+            <button
+              key={id}
+              onClick={() => setActiveTab(id)}
+              className={`text-left px-3 py-2.5 rounded-xl text-sm font-medium transition-all flex items-center gap-2 ${
+                activeTab === id
+                  ? "bg-amber-400/10 text-amber-400 border border-amber-400/20"
+                  : "text-slate-500 hover:text-slate-300 hover:bg-white/5"
+              }`}
+            >
+              {id === "profile" && <UserCircle className="h-4 w-4" />}
+              {label}
+            </button>
+          ))}
+        </aside>
+
+        {/* Main content */}
+        <main className="flex-1 pb-24 md:pb-8 overflow-x-hidden">
+          {activeTab === "dashboard" && (
+            <>
+              <MetroHeader extraTransactions={userTransactions} />
+              <InsightAlerts />
+              <MonthComparison />
+              <TransactionFeed extraTransactions={userTransactions} />
+            </>
+          )}
+          {activeTab === "shield" && (
+            <div className="pt-5">
+              <BudgetShield />
+            </div>
+          )}
+          {activeTab === "buckets" && (
+            <div className="pt-5">
+              <SurvivalBuckets />
+            </div>
+          )}
+          {activeTab === "insights" && (
+            <div className="pt-5">
+              <InsightAlerts />
+            </div>
+          )}
+          {activeTab === "profile" && (
+            <div className="pt-5">
+              <ProfilePage />
+            </div>
+          )}
+        </main>
+      </div>
+
+      <BottomNav active={activeTab} onChange={setActiveTab} />
+
+      {/* Global FAB — hidden on profile tab */}
+      {activeTab !== "profile" && (
+        <AddExpenseModal onAdd={handleAddExpense} />
+      )}
     </div>
   );
 }
